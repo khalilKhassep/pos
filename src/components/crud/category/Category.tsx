@@ -1,10 +1,11 @@
 import React from 'react';
+import ListCategories from './inc/ListCategories';
 import Button from '@material-ui/core/Button';
 const Category = () => {
     return (
         <>
-        <h1> List all category </h1>
-        <Button variant={'outlined'}> Add new category </Button>
+            <ListCategories />
+            <Button variant={'outlined'}> Add new category </Button>
         </>
 
     )
