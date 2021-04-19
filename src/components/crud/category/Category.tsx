@@ -1,23 +1,22 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
+import {useSnackbar} from 'notistack';
 import Box from '@material-ui/core/Box';
 import ListCategories from './inc/ListCategories';
 import Button from '@material-ui/core/Button';
 import Dialog from './inc/Dialog';
+
 const Category = () => {
-    //Fetch categories 
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
     const [categories, setCategories] = useState([]);
-    const [open , setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [action, setAction] = useState('');
 
     useEffect(() => {
         fetchCategories(process.env.REACT_APP_BASE_URL, 'cat')
             .then(resolved => setCategories(resolved))
     }, []);
 
-    const handleOpen  = () => {
-        setOpen(true);
-        console.log(open)
-    };
 
     const fetchCategories = async (url: any, params: string) => {
         const _url: string = url + params;
@@ -31,21 +30,25 @@ const Category = () => {
     };
 
     const addCategory = () => {
-
+        setAction('new');
+        setOpen(true);
     };
 
     return (
         <>
         <ListCategories categories={categories}/>
-        <Box mt={4}>
-            <Button  onClick={handleOpen} variant={'outlined'}> Add  category </Button>
+        <Box mt={4} mb={4}>
+            <Button onClick={addCategory} variant={'outlined'}> Add category </Button>
         </Box>
-        <Dialog open={open} setOpen={setOpen}/>
+        <Dialog open={open} setOpen={setOpen} action={action} data={categories} setData={setCategories}
+                enqueueSnackbar={enqueueSnackbar} closeSnackbar={closeSnackbar}/>
         </>
 
     )
 };
 //Build a table to list categories
 //Build a dialog component
+//Fetch categories
+
 
 export default Category;

@@ -10,40 +10,102 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 const Dialog = (props: any) => {
-    const [value, setValue] = useState('');
+    const [open, setOpen] = useState(false);
+    const [item, setItem] = useState({
+        name: '',
+    });
 
     useEffect(() => {
-        // setOpen(props.open)
     }, []);
 
-    const handleInput = (value: string) => {
-        setValue(value);
-        console.log(value);
+    const handleInput = (_value: string) => {
+        setItem({...item, name: _value});
     };
 
     const handleClose = () => {
-        props.setOpen(false);
+        props.enqueueSnackbar("Are you sure want to close ? ", {
+            variant: 'warning',
+            action,
+        });
+
     };
+
+
+    const postItem = async (item: { name: string }) => {
+
+        const request = await fetch(`${process.env.REACT_APP_BASE_URL}cat`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(item),
+        });
+
+        if (request.ok) {
+            const response = await request.json();
+            props.enqueueSnackbar(response.message);
+            const newDataArr = [...props.data, {
+                id: response.id,
+                name: response.values.$name,
+                created_at: response.values.$created_at,
+                updated_at: ''
+            }];
+            props.setData(newDataArr);
+            setItem({...item, name: ''})
+        }
+    };
+
+
+    const handleAction = (action: string) => {
+        switch (action) {
+            case 'new' :
+                postItem(item);
+                break;
+            default:
+                console.log(item);
+                break;
+
+        }
+    };
+
+    const action = (key: any) => (
+        <>
+        <Button onClick={() => {
+            props.setOpen(true);
+            props.closeSnackbar(key)
+        }}>
+            No
+        </Button>
+        <Button onClick={() => {
+            props.setOpen(false);
+            setItem({...item, name: ''})
+            props.closeSnackbar(key)
+        }}>
+            Yes
+        </Button>
+        </>
+    );
+
 
     return (
         <MuiDialog open={props.open}>
-            <DialogTitle>{'Title'}</DialogTitle>
+            <DialogTitle>{props.action}</DialogTitle>
             <DialogContent>
                 <form>
                     <FormControl fullWidth={true} margin={'normal'}>
                         <TextField
                             variant={'outlined'}
-                            value={value} type={'string'}
-                            label={value}
-                            placeholder={value}
+                            value={item.name} type={'string'}
+                            label={item.name}
+                            placeholder={item.name}
                             fullWidth={true}
                             onChange={event => {
                                 handleInput(event.target.value)
                             }}
                         />
                     </FormControl>
-                    <ButtonGroup variant={'contained'} size={'small'} color={'primary'} >
-                        <Button> Save</Button>
+                    <ButtonGroup variant={'contained'} size={'small'} color={'primary'}>
+                        <Button onClick={() => handleAction(props.action)}> Save</Button>
                         <Button onClick={handleClose}>Close</Button>
                     </ButtonGroup>
 
@@ -52,5 +114,6 @@ const Dialog = (props: any) => {
         </MuiDialog>
     )
 };
+
 
 export default Dialog;
