@@ -23,7 +23,6 @@ const Dialog = (props: any) => {
 
     const handleClose = () => {
         props.setOpen(false);
-
     };
 
     return (
@@ -31,18 +30,19 @@ const Dialog = (props: any) => {
             <DialogTitle>{'Title'}</DialogTitle>
             <DialogContent>
                 <form>
-                    <FormControl>
+                    <FormControl fullWidth={true} margin={'normal'}>
                         <TextField
                             variant={'outlined'}
                             value={value} type={'string'}
                             label={value}
                             placeholder={value}
+                            fullWidth={true}
                             onChange={event => {
                                 handleInput(event.target.value)
                             }}
                         />
                     </FormControl>
-                    <ButtonGroup variant={'contained'} size={'small'} color={'primary'}>
+                    <ButtonGroup variant={'contained'} size={'small'} color={'primary'} >
                         <Button> Save</Button>
                         <Button onClick={handleClose}>Close</Button>
                     </ButtonGroup>
