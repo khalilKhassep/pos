@@ -51,13 +51,13 @@ router.post('/', async (req, res) => {
     stmt.run(function (err) {
       if (err !== null) {
         response.error = err
-        response.message = 'There was an error excuting statemnt'
+        response.message = 'There was an error excuting stateemnt'
         response.$this = this
         res.send(response)
 
       } else if (err === null) {
         response.error = err
-        response.message = 'Query statment completed'
+        response.message = 'Query statement completed'
         response.$this = this
         res.send(response)
 
