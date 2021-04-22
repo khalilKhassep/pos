@@ -74,7 +74,7 @@ const Dialog = (props: any) => {
                 name: response.values.$name,
                 created_at: response.values.$created_at,
                 updated_at: ''
-            }];
+            }]
 
             props.setData(newDataArr);
             setCat({...cat, name: ''});
@@ -111,14 +111,6 @@ const Dialog = (props: any) => {
         }
 
     };
-    const del = async (cat: any) => {
-        const request = await fetch(`${process.env.REACT_APP_BASE_URL}cat/delete/${cat.id}`, {method: 'delete'});
-        if (request.ok) {
-            const response = await request.json();
-            console.log(response)
-        }
-    };
-
 
     const handleAction = (action: string) => {
         switch (action) {
@@ -127,9 +119,6 @@ const Dialog = (props: any) => {
                 break;
             case 'edit' :
                 edit(cat);
-                break;
-            case 'delete' :
-                del(cat);
                 break;
             default:
                 console.log(cat);

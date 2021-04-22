@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import ListCategories from './inc/ListCategories';
 import Button from '@material-ui/core/Button';
@@ -18,7 +18,7 @@ const Category = () => {
 
     const fetchCategories = async (url: any, params: string) => {
         const _url: string = url + params;
-        const request = await fetch(_url, {method: 'GET'});
+        const request = await fetch(_url, { method: 'GET' });
         if (request.ok) {
             const response = await request.json();
             return Promise.resolve(response.data);
@@ -35,14 +35,14 @@ const Category = () => {
 
     return (
         <>
-        <ListCategories categories={categories} setCategories={setCategories}/>
+            <ListCategories categories={categories} setCategories={setCategories} />
 
-        <Box mt={4} mb={4}>
-            <Button onClick={addCategory} variant={'outlined'}> Add category </Button>
-        </Box>
+            <Box mt={4} mb={4}>
+                <Button onClick={addCategory} variant={'outlined'}> Add category </Button>
+            </Box>
 
-        <Dialog open={open} setOpen={setOpen} action={action} data={categories} setData={setCategories}
-        />
+            <Dialog open={open} setOpen={setOpen} action={action} data={categories} setData={setCategories}
+            />
         </>
 
     )

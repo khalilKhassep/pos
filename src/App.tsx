@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Header from './components/crud/partial/Header';
 //App imports
 import Category from './components/crud/category/Category';
+import Product from './components/crud/product/index';
 
 const useStyle = makeStyles(theme => ({
 
@@ -49,7 +50,7 @@ function App() {
                                 <Link to={'/categories'}>Categories</Link>
                             </Paper>
                             <Paper>
-                                <Link to={'/products'}>Products</Link>
+                                <Link to={'/product'}>Products</Link>
 
                             </Paper>
                         </Box>
@@ -58,6 +59,9 @@ function App() {
 
                     <Route path={'/categories'}>
                         <Category/>
+                    </Route>
+                    <Route path={'/product'}>
+                     <Product/>
                     </Route>
                 </Switch>
             </Box>
