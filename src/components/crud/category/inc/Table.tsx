@@ -55,6 +55,6 @@ const Table = (props: any): any => {
 
         </React.Fragment>
     )
-}
+};
 
 export default Table;
