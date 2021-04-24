@@ -43,7 +43,8 @@ const Table = (props: any): any => {
                         {Array.isArray(tableHeaders) && tableHeaders.length ? tableHeaders.map((head, index) => {
                             return index + 1 === tableHeaders.length ? (  // Addding none exisiting head | proparity bu checking the last index of array then adding a ne one
                                 <>
-
+                                <TableCell align={'left'}
+                                           key={Math.floor(Math.random() * 100)}>{head}</TableCell>
                                 <TableCell align={'left'}
                                            key={Math.floor(Math.random() * 100)}>{'Action'}</TableCell>
                                 </>
