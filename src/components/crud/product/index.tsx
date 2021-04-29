@@ -1,6 +1,9 @@
 import Form from './inc/Form';
-const Product = () => {
 
+
+const Product = () => {
+ 
+  
     return (
         <>
           <Form />
