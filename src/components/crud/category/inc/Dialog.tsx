@@ -2,36 +2,58 @@ import React, {useState, useEffect} from 'react';
 import MuiDialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import {useSnackbar} from "notistack";
+
 
 const Dialog = (props: any) => {
-    const [open, setOpen] = useState(false);
-    const [item, setItem] = useState({
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+    const [cat, setCat] = useState({
         name: '',
     });
 
+
     useEffect(() => {
+        setCat((prevState: any) => {
+            if (props.item && props.action !== 'new') {
+                return {
+                    ...prevState,
+                    name: props.item.name,
+                    id: props.item.id
+                }
+            }
+            return {...prevState, name: 'New category'}
+        })
     }, []);
 
     const handleInput = (_value: string) => {
-        setItem({...item, name: _value});
+        setCat({...cat, name: _value});
     };
 
     const handleClose = () => {
-        props.enqueueSnackbar("Are you sure want to close ? ", {
+        enqueueSnackbar("Are you sure want to close ? ", {
             variant: 'warning',
             action,
         });
 
     };
 
+    const onEnter = () => {
+        if (props.item && props.action !== 'new') {
+            setCat((prevState: any) => {
+                return {
+                    name: props.item.name
+                }
+            })
+        }
+    };
 
-    const postItem = async (item: { name: string }) => {
+
+    const post = async (item: { name: string }) => {
 
         const request = await fetch(`${process.env.REACT_APP_BASE_URL}cat`, {
             method: 'POST',
@@ -42,27 +64,64 @@ const Dialog = (props: any) => {
         });
 
         if (request.ok) {
+
             const response = await request.json();
-            props.enqueueSnackbar(response.message);
+
+            enqueueSnackbar(response.message);
+
             const newDataArr = [...props.data, {
                 id: response.id,
                 name: response.values.$name,
                 created_at: response.values.$created_at,
                 updated_at: ''
-            }];
+            }]
+
             props.setData(newDataArr);
-            setItem({...item, name: ''})
+            setCat({...cat, name: ''});
+            props.setOpen(false);
         }
     };
+    const edit = async (item: any) => {
+        item = props.item;
 
+        const request = await fetch(`${process.env.REACT_APP_BASE_URL}cat/update/${item.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(cat),
+        });
+        if (request.ok) {
+            const response = await request.json();
+            console.log('Insdie response', props.data);
+
+            await props.setData((props.data.map((_cat: any) => {
+                if (_cat.id === item.id) {
+                    return {
+                        ..._cat,
+                        name: response.values.$name,
+                        updated_at: response.values.$updated_at,
+                    }
+                }
+                return _cat;
+            })));
+
+            props.setOpen(false);
+            enqueueSnackbar(response.message);
+        }
+
+    };
 
     const handleAction = (action: string) => {
         switch (action) {
             case 'new' :
-                postItem(item);
+                post(cat);
+                break;
+            case 'edit' :
+                edit(cat);
                 break;
             default:
-                console.log(item);
+                console.log(cat);
                 break;
 
         }
@@ -72,14 +131,13 @@ const Dialog = (props: any) => {
         <>
         <Button onClick={() => {
             props.setOpen(true);
-            props.closeSnackbar(key)
+            closeSnackbar(key)
         }}>
             No
         </Button>
         <Button onClick={() => {
             props.setOpen(false);
-            setItem({...item, name: ''})
-            props.closeSnackbar(key)
+            closeSnackbar(key)
         }}>
             Yes
         </Button>
@@ -88,26 +146,29 @@ const Dialog = (props: any) => {
 
 
     return (
-        <MuiDialog open={props.open}>
-            <DialogTitle>{props.action}</DialogTitle>
+        <MuiDialog open={props.open} onEnter={onEnter}>
+            <DialogTitle>{props.action} : {cat.name}</DialogTitle>
             <DialogContent>
                 <form>
                     <FormControl fullWidth={true} margin={'normal'}>
                         <TextField
                             variant={'outlined'}
-                            value={item.name} type={'string'}
-                            label={item.name}
-                            placeholder={item.name}
+                            value={cat.name} type={'string'}
+                            label={cat.name !== undefined || cat.name !== '' ? cat.name : 'New cat'}
+                            placeholder={cat.name}
                             fullWidth={true}
                             onChange={event => {
                                 handleInput(event.target.value)
                             }}
                         />
                     </FormControl>
-                    <ButtonGroup variant={'contained'} size={'small'} color={'primary'}>
-                        <Button onClick={() => handleAction(props.action)}> Save</Button>
-                        <Button onClick={handleClose}>Close</Button>
-                    </ButtonGroup>
+                    <DialogActions>
+                        <ButtonGroup variant={'contained'} size={'small'} color={'primary'}>
+                            <Button onClick={() => handleAction(props.action)}> Submit</Button>
+                            <Button onClick={handleClose}>Close</Button>
+                        </ButtonGroup>
+                    </DialogActions>
+
 
                 </form>
             </DialogContent>
