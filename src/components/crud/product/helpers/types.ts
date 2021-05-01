@@ -11,6 +11,16 @@ interface TypeProduct {
     exp_date: string;
 }
 
+interface TypeCategory {
+    created_at?: string;
+    id: number | string;
+    name: string;
+    updated_at?: string | null;
+
+}
 
 
-export type {TypeProduct}
+export type
+{
+    TypeProduct , TypeCategory
+}
